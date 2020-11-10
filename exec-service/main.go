@@ -45,6 +45,8 @@ func main() {
 	router.GET("/api/v1/go-version", goVersion)
 	// path variable
 	router.GET("/api/v1/show-file/:name", getFileContent)
+	// serve static file
+	router.ServeFiles("/static/*filepath", http.Dir("./static"))
 
 	log.Fatal(http.ListenAndServe(":8080", router))
 }
