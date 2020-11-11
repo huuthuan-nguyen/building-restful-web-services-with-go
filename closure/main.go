@@ -5,9 +5,9 @@ import (
 )
 
 func main() {
-	numGenerator := generator()
+	increment := generator()
 	for i := 0; i < 5; i++ {
-		fmt.Print(numGenerator(), "\t")
+		fmt.Print(increment(), "\t")
 	}
 }
 
