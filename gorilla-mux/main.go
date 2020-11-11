@@ -30,16 +30,20 @@ func AuthorArticle(w http.ResponseWriter, r *http.Request) {
 // settings handler
 func settingsHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r) // parameters map
+	queryParams := r.URL.Query()
 
 	w.WriteHeader(http.StatusOK)
 	fmt.Fprintf(w, "Setting ID: %v\n", vars["id"])
+	fmt.Fprintf(w, "Name query string param: %s\n", queryParams["name"])
 }
 
 func detailsHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r) // parameters map
+	queryParams := r.URL.Query()
 
 	w.WriteHeader(http.StatusOK)
 	fmt.Fprintf(w, "Detail ID: %v\n", vars["id"])
+	fmt.Fprintf(w, "Name query string param: %s\n", queryParams["name"])
 }
 
 func main() {
@@ -48,6 +52,9 @@ func main() {
 
 	// strict slash
 	r.StrictSlash(true)
+
+	// enable encoded path
+	r.UseEncodedPath()
 
 	// attach a path with handler
 	r.HandleFunc("/articles/{category}/{id:[0-9]+}", ArticleHandler)
