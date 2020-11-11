@@ -57,6 +57,9 @@ func main() {
 	s.HandleFunc("/{id:[0-9]+}/settings", settingsHandler)
 	s.HandleFunc("/{id:[0-9]+}/details", detailsHandler)
 
+	// serve static with path prefix
+	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
+
 	server := &http.Server{
 		Handler: r,
 		Addr: ":8080",
