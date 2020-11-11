@@ -34,7 +34,11 @@ func settingsHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	fmt.Fprintf(w, "Setting ID: %v\n", vars["id"])
-	fmt.Fprintf(w, "Name query string param: %s\n", queryParams["name"])
+
+	name, valid := queryParams["name"]
+	if valid == true {
+		fmt.Fprintf(w, "Name query string param: %s\n", name[0])
+	}
 }
 
 func detailsHandler(w http.ResponseWriter, r *http.Request) {
@@ -43,12 +47,18 @@ func detailsHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	fmt.Fprintf(w, "Detail ID: %v\n", vars["id"])
-	fmt.Fprintf(w, "Name query string param: %s\n", queryParams["name"])
+
+	name, valid := queryParams["name"]
+	if valid == true {
+		fmt.Fprintf(w, "Name query string param: %s\n", name[0])
+	}
 }
 
 func main() {
 	// create a new router
 	r := mux.NewRouter()
+
+	r.Host("127.0.0.1")
 
 	// strict slash
 	r.StrictSlash(true)
