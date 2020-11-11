@@ -46,6 +46,9 @@ func main() {
 	// create a new router
 	r := mux.NewRouter()
 
+	// strict slash
+	r.StrictSlash(true)
+
 	// attach a path with handler
 	r.HandleFunc("/articles/{category}/{id:[0-9]+}", ArticleHandler)
 
