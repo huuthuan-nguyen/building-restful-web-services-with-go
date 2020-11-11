@@ -4,6 +4,9 @@ import (
 	"net/http"
 	"fmt"
 	"encoding/json"
+	"time"
+	"strconv"
+	"log"
 )
 
 type city struct {
@@ -11,6 +14,33 @@ type city struct {
 	Area uint64	`json:area`
 }
 
+// middleware to check content type as JSON
+func filterContentType(handler http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		log.Println("Currently in the check content type middleware")
+		// filtering request by MIME type
+		if r.Header.Get("Content-Type") != "application/json" {
+			w.WriteHeader(http.StatusUnsupportedMediaType)
+			w.Write([]byte("415 - Unsupported Media Type"))
+			return
+		}
+		// filtering run before the main handler
+		handler.ServeHTTP(w, r)
+	})
+}
+
+// middleware to add server timestamp for response cookie
+func setServerTimeCookie(handler http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		handler.ServeHTTP(w, r)
+		// add server timestamp run after main handler
+		cookie := http.Cookie{Name: "Server-Time(UTC)", Value: strconv.FormatInt(time.Now().Unix(), 10)}
+		http.SetCookie(w, &cookie)
+		log.Println("Currently in the set server time middleware")
+	})
+}
+
+// main handler
 func mainHandler(w http.ResponseWriter, r *http.Request) {
 	// check if method is POST
 	if r.Method == "POST" {
@@ -34,6 +64,7 @@ func mainHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	http.HandleFunc("/city", mainHandler)
+	mainLogicHandler := http.HandlerFunc(mainHandler)
+	http.Handle("/city", filterContentType(setServerTimeCookie(mainLogicHandler)))
 	http.ListenAndServe(":8080", nil)
 }
